@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reminder App with Time</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+    }
+    h1 {
+      color: #333;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      font-size: 16px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background: #fff;
+      margin: 5px 0;
+      padding: 10px;
+      width: 350px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>⏰ Reminder App</h1>
+  <input type="text" id="reminderText" placeholder="Enter reminder message" />
+  <input type="time" id="reminderTime" />
+  <button onclick="addReminder()">Add Reminder</button>
+  <ul id="reminderList"></ul>
+
+  <script>
+    const reminders = [];
+
+    function addReminder() {
+      const text = document.getElementById('reminderText').value.trim();
+      const time = document.getElementById('reminderTime').value;
+
+      if (text && time) {
+        reminders.push({ text, time, alerted: false });
+
+        const li = document.createElement('li');
+        li.textContent = `${text} at ${time}`;
+
+        const delBtn = document.createElement('button');
+        delBtn.textContent = "Delete";
+        delBtn.onclick = () => {
+          li.remove();
+          const index = reminders.findIndex(r => r.text === text && r.time === time);
+          if (index > -1) reminders.splice(index, 1);
+        };
+
+        li.appendChild(delBtn);
+        document.getElementById('reminderList').appendChild(li);
+
+        document.getElementById('reminderText').value = "";
+        document.getElementById('reminderTime').value = "";
+      }
+    }
+
+    setInterval(() => {
+      const now = new Date();
+      const currentTime = now.toTimeString().slice(0, 5);
+
+      reminders.forEach(reminder => {
+        if (reminder.time === currentTime && !reminder.alerted) {
+          alert("🔔 Reminder: " + reminder.text);
+          reminder.alerted = true;
+        }
+      });
+    }, 1000);
+  </script>
+</body>
+</html>
